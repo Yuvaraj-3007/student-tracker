@@ -1,0 +1,25 @@
+{
+  "commits": [
+    {
+      "sha": "7a3f9b2c4e8d",
+      "message": "feat: add todo list component with local storage",
+      "author": "Akilan Selvaraj",
+      "timestamp": "2026-04-22T10:45:00Z",
+      "branch": "main",
+      "filesChanged": ["src/components/TodoList.jsx", "src/utils/storage.js"],
+      "additions": 96,
+      "deletions": 2
+    },
+    {
+      "sha": "1d5e8f2a9c7b",
+      "message": "fix: prevent duplicate entries in todo list",
+      "author": "Akilan Selvaraj",
+      "timestamp": "2026-04-22T15:22:00Z",
+      "branch": "feature/dedup",
+      "filesChanged": ["src/components/TodoList.jsx"],
+      "additions": 14,
+      "deletions": 4
+    }
+  ],
+  "combinedDiff": "diff --git a/src/components/TodoList.jsx b/src/components/TodoList.jsx\n+import { useState, useEffect } from 'react';\n+import { saveTodos, loadTodos } from '../utils/storage';\n+\n+export default function TodoList() {\n+  const [todos, setTodos] = useState(() => loadTodos());\n+  const [input, setInput] = useState('');\n+\n+  useEffect(() => { saveTodos(todos); }, [todos]);\n+\n+  function addTodo() {\n+    const trimmed = input.trim();\n+    if (!trimmed) return;\n+    if (todos.some(t => t.text === trimmed)) return;\n+    setTodos([...todos, { id: Date.now(), text: trimmed, done: false }]);\n+    setInput('');\n+  }\n+\n+  return (\n+    <div>\n+      <input value={input} onChange={e => setInput(e.target.value)} />\n+      <button onClick={addTodo}>Add</button>\n+      <ul>{todos.map(t => <li key={t.id}>{t.text}</li>)}</ul>\n+    </div>\n+  );\n+}\n"
+}

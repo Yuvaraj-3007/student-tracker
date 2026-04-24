@@ -1,0 +1,26 @@
+{
+  "name": "student-tracker-poc",
+  "version": "0.1.0",
+  "description": "Automated daily AI feedback system for junior developer students across multiple GitHub repos.",
+  "private": true,
+  "main": "src/scheduler.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/scheduler.js",
+    "run-once": "node src/scheduler.js --once",
+    "dashboard": "node scripts/buildDashboard.js",
+    "dashboard:data": "node scripts/copyDataForDashboard.js",
+    "dashboard:dev": "npm run dashboard:data && npm --prefix frontend run dev",
+    "dashboard:build": "npm run dashboard:data && npm --prefix frontend run build"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.1",
+    "@octokit/rest": "^21.0.2",
+    "dotenv": "^16.4.5",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^8.0.5"
+  }
+}
