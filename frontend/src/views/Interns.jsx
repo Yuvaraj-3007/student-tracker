@@ -1,13 +1,27 @@
 import React, { useMemo, useState } from 'react';
 import { scoreClass } from '../hooks/useData.js';
-import { RiskBadge, StatusBadge, ScoreChip } from '../components/Badge.jsx';
+import { StatusBadge, ScoreChip } from '../components/Badge.jsx';
 import Icon from '../components/Icon.jsx';
 
+const RISK_LABELS = {
+  none: 'No concerns',
+  low_effort: 'Low activity',
+  possible_copy: 'Possibly copied work',
+  incomplete_work: 'Unfinished work'
+};
+
 const RISK_OPTIONS = ['', 'none', 'low_effort', 'possible_copy', 'incomplete_work'];
+const RISK_OPTION_LABELS = {
+  '': 'All',
+  none: 'No concerns',
+  low_effort: 'Low activity',
+  possible_copy: 'Possibly copied work',
+  incomplete_work: 'Unfinished work'
+};
 const STATUS_OPTIONS = [
   { value: '', label: 'All' },
-  { value: 'active', label: 'Active today' },
-  { value: 'inactive', label: 'Inactive' }
+  { value: 'active', label: 'Worked today' },
+  { value: 'inactive', label: 'No work logged' }
 ];
 
 export default function Interns({ rows, search }) {
@@ -73,10 +87,10 @@ export default function Interns({ rows, search }) {
     <section className="view">
       <div className="page-title">
         <Icon name="users" size={16} stroke={2} />
-        Interns
+        Intern Directory
       </div>
       <div className="page-subtitle">
-        Filter, sort, and inspect each intern's daily performance.
+        Browse and filter interns by today's performance.
       </div>
 
       <div className="filters">
@@ -85,23 +99,23 @@ export default function Interns({ rows, search }) {
           <input
             id="f-name"
             type="text"
-            placeholder="e.g. akilan"
+            placeholder="Type a name..."
             value={search || localName}
             onChange={(e) => setLocalName(e.target.value)}
           />
         </div>
         <div className="filter">
-          <label htmlFor="f-risk">Risk flag</label>
+          <label htmlFor="f-risk">Concern Type</label>
           <select id="f-risk" value={risk} onChange={(e) => setRisk(e.target.value)}>
             {RISK_OPTIONS.map((r) => (
               <option key={r || 'all'} value={r}>
-                {r || 'All'}
+                {RISK_OPTION_LABELS[r]}
               </option>
             ))}
           </select>
         </div>
         <div className="filter">
-          <label htmlFor="f-status">Status</label>
+          <label htmlFor="f-status">Activity</label>
           <select id="f-status" value={status} onChange={(e) => setStatus(e.target.value)}>
             {STATUS_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -111,7 +125,7 @@ export default function Interns({ rows, search }) {
           </select>
         </div>
         <div className="filter">
-          <label htmlFor="f-score">Min score: {minScore}</label>
+          <label htmlFor="f-score">Minimum performance: {minScore}/10</label>
           <input
             id="f-score"
             type="range"
@@ -126,7 +140,7 @@ export default function Interns({ rows, search }) {
           Clear filters
         </button>
         <span className="results-count">
-          {sorted.length} intern{sorted.length === 1 ? '' : 's'}
+          Showing {sorted.length} intern{sorted.length === 1 ? '' : 's'}
         </span>
       </div>
 
@@ -136,11 +150,11 @@ export default function Interns({ rows, search }) {
             <tr>
               {[
                 ['name', 'Name'],
-                ['github', 'GitHub'],
-                ['status', 'Status'],
-                ['commits', 'Commits'],
-                ['score', 'Score'],
-                ['risk', 'Risk']
+                ['github', 'GitHub Handle'],
+                ['status', 'Activity'],
+                ['commits', 'Updates Today'],
+                ['score', 'Performance'],
+                ['risk', 'Concern']
               ].map(([key, label]) => (
                 <th key={key} onClick={() => handleSort(key)}>
                   {label}
@@ -149,7 +163,7 @@ export default function Interns({ rows, search }) {
                   </span>
                 </th>
               ))}
-              <th>Repo</th>
+              <th>Project</th>
             </tr>
           </thead>
           <tbody>
@@ -158,7 +172,7 @@ export default function Interns({ rows, search }) {
                 <td colSpan="7">
                   <div className="empty-state">
                     <Icon name="search" size={48} stroke={1.5} />
-                    <div className="empty-title">No interns match the current filters.</div>
+                    <div className="empty-title">No interns match your filters.</div>
                   </div>
                 </td>
               </tr>
@@ -188,7 +202,13 @@ export default function Interns({ rows, search }) {
                     <ScoreChip score={r.score} cls={scoreClass(r.score)} />
                   </td>
                   <td>
-                    <RiskBadge flag={r.risk} />
+                    {r.risk ? (
+                      <span className={`badge risk-${r.risk}`}>
+                        {RISK_LABELS[r.risk] || r.risk}
+                      </span>
+                    ) : (
+                      '—'
+                    )}
                   </td>
                   <td>
                     {r.repo ? (

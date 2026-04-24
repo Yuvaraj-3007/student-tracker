@@ -2,10 +2,10 @@ import React from 'react';
 import Icon from './Icon.jsx';
 
 const TITLES = {
-  overview: 'Overview',
-  interns: 'Interns',
-  reports: 'Reports',
-  repos: 'Repositories',
+  overview: 'Today at a Glance',
+  interns: 'Intern Directory',
+  reports: 'Daily Feedback',
+  repos: 'GitHub Projects',
   settings: 'Settings'
 };
 
@@ -20,7 +20,7 @@ export default function Topbar({ current, search, onSearch, date, onSearchSubmit
         <input
           type="text"
           value={search}
-          placeholder="Search intern by name or GitHub username..."
+          placeholder="Search by intern name..."
           onChange={(e) => onSearch(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === 'Enter') onSearchSubmit();

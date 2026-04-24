@@ -8,16 +8,16 @@ export default function Repos({ rows }) {
     <section className="view">
       <div className="page-title">
         <Icon name="folder" size={16} stroke={2} />
-        Tracked Repositories
+        Intern GitHub Projects
       </div>
       <div className="page-subtitle">
-        Source of truth for each intern's daily commits.
+        The GitHub project each intern submits their daily work to.
       </div>
 
       {rows.length === 0 ? (
         <div className="empty-state">
           <Icon name="folder" size={48} stroke={1.5} />
-          <div className="empty-title">No repositories configured.</div>
+          <div className="empty-title">No GitHub projects linked yet.</div>
         </div>
       ) : (
         <div className="repo-grid">

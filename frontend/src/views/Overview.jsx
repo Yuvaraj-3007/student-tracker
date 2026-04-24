@@ -13,25 +13,25 @@ export default function Overview({ rows }) {
   const risks = rows.filter((r) => r.risk && r.risk !== 'none');
 
   const kpis = [
-    { label: 'Total Interns', value: total, sub: 'Configured', cls: 'purple', icon: 'users' },
+    { label: 'Interns on Program', value: total, sub: 'Currently tracked', cls: 'purple', icon: 'users' },
     {
-      label: 'Active Today',
+      label: 'Worked Today',
       value: active,
-      sub: `${total - active} inactive`,
+      sub: `${total - active} didn't log work`,
       cls: 'good',
       icon: 'checkCircle'
     },
     {
-      label: 'Avg Score',
+      label: 'Average Performance',
       value: `${avg}/10`,
-      sub: `${scores.length} scored`,
+      sub: `${scores.length} reviewed`,
       cls: scoreClass(avg),
       icon: 'trendingUp'
     },
     {
-      label: 'Risk Alerts',
+      label: 'Needs Attention',
       value: risks.length,
-      sub: risks.length > 0 ? 'Needs attention' : 'All clear',
+      sub: risks.length > 0 ? 'Flagged today' : 'All on track',
       cls: risks.length > 0 ? 'bad' : 'good',
       icon: 'alertTriangle'
     }
@@ -45,10 +45,10 @@ export default function Overview({ rows }) {
     <section className="view">
       <div className="page-title">
         <Icon name="dashboard" size={16} stroke={2} />
-        Overview
+        Today at a Glance
       </div>
       <div className="page-subtitle">
-        Snapshot of today's intern activity and AI-generated feedback.
+        Today's intern activity and AI feedback summary.
       </div>
 
       <div className="kpi-grid">
@@ -69,12 +69,12 @@ export default function Overview({ rows }) {
       <div className="section">
         <h2>
           <Icon name="trendingUp" size={15} />
-          Score Distribution
+          Today's Performance Ranking
         </h2>
         {activeScored.length === 0 ? (
           <div className="empty-state">
             <Icon name="inbox" size={48} stroke={1.5} />
-            <div className="empty-title">No scored interns yet.</div>
+            <div className="empty-title">No performance scores yet for today.</div>
           </div>
         ) : (
           <div className="score-bars">
@@ -97,12 +97,12 @@ export default function Overview({ rows }) {
       <div className="section">
         <h2>
           <Icon name="alertTriangle" size={15} />
-          Risk Alerts
+          Interns to Check On
         </h2>
         {risks.length === 0 ? (
           <div className="empty-state">
             <Icon name="checkCircle" size={48} stroke={1.5} />
-            <div className="empty-title">No risk flags today — all clear.</div>
+            <div className="empty-title">Everyone is on track today.</div>
           </div>
         ) : (
           risks.map((r) => (

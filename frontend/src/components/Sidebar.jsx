@@ -2,15 +2,15 @@ import React from 'react';
 import Icon from './Icon.jsx';
 
 const NAV = [
-  { id: 'overview', icon: 'dashboard', label: 'Overview' },
-  { id: 'interns', icon: 'users', label: 'Interns' },
-  { id: 'reports', icon: 'fileText', label: 'Reports' },
-  { id: 'repos', icon: 'folder', label: 'Repositories' }
+  { id: 'overview', icon: 'dashboard', label: 'Today at a Glance' },
+  { id: 'reports', icon: 'fileText', label: 'Daily Feedback' },
+  { id: 'interns', icon: 'users', label: 'Intern Directory' },
+  { id: 'repos', icon: 'folder', label: 'GitHub Projects' }
 ];
 
 export default function Sidebar({ current, onChange, mode }) {
-  const modeUpper = (mode || 'mock').toUpperCase();
   const modeClass = mode === 'real' ? 'real' : 'mock';
+  const modeLabel = mode === 'real' ? 'Live' : 'Sample';
 
   return (
     <aside className="sidebar">
@@ -20,7 +20,7 @@ export default function Sidebar({ current, onChange, mode }) {
         </div>
         <div className="brand-text">
           <h1>NIGHTWATCH</h1>
-          <div className="tagline">Intern EOD Agent</div>
+          <div className="tagline">Daily Intern Progress</div>
         </div>
       </div>
 
@@ -39,10 +39,10 @@ export default function Sidebar({ current, onChange, mode }) {
       </div>
 
       <div className="sidebar-footer">
-        <div>System mode</div>
+        <div>Data source</div>
         <div className={`mode-pill ${modeClass}`}>
           <Icon name="server" size={11} stroke={2.25} />
-          {modeUpper}
+          {modeLabel}
         </div>
       </div>
     </aside>
