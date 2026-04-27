@@ -13,7 +13,7 @@ analyzes their work using AI, and sends feedback emails automatically.
 ```
 Student writes code on GitHub
         ↓
-System checks it every day automatically (8 PM)
+System checks it every day automatically (7 PM)
         ↓
 AI reads their work like a senior mentor
         ↓
@@ -30,7 +30,7 @@ Student Repos (Multiple GitHub URLs)
         ↓
 Repo Registry (students.json)
         ↓
-Scheduler (node-cron — runs at 8 PM daily)
+Scheduler (node-cron — runs at 7 PM daily)
         ↓
 GitHub API (Fetch commits per student)
         ↓
@@ -54,7 +54,7 @@ student-tracker-poc/
 │   ├── analyzeCommit.js       # Claude AI — analyze student work
 │   ├── generateReport.js      # Build manager + student reports
 │   ├── sendEmail.js           # Send emails via Nodemailer
-│   └── scheduler.js           # Cron entry point (8 PM daily)
+│   └── scheduler.js           # Cron entry point (7 PM daily)
 ├── .env.example               # Environment variable template
 ├── package.json
 └── README.md
@@ -84,7 +84,7 @@ node src/scheduler.js
 ```
 
 ### 5. Run on schedule (production)
-Deploy to VPS — cron runs automatically at 8 PM daily.
+Deploy to VPS — cron runs automatically at 7 PM daily.
 
 ---
 

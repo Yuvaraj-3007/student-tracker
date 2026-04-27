@@ -1,0 +1,37 @@
+# Dependencies — reinstalled inside the image
+node_modules
+**/node_modules
+
+# Git metadata
+.git
+.gitignore
+
+# Secrets — never bake into images
+.env
+.env.*
+!.env.example
+
+# Runtime data — persisted via Coolify volume mounts at /app/logs and /app/reports
+logs/
+reports/
+output/
+screenshots/
+
+# Frontend dashboard — separate concern, not needed in scheduler image
+frontend/
+scripts/
+dashboard.html
+mock-design.html
+
+# Documentation — not needed at runtime
+MOCK.md
+*.md
+
+# Editor / tool config
+.claude/
+.vscode/
+.idea/
+
+# Docker build inputs themselves
+Dockerfile
+.dockerignore

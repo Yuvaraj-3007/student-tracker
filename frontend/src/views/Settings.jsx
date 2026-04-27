@@ -9,7 +9,7 @@ export default function Settings({ mode, runAt, date, fileName, configuredCount 
     ['Report Date', 'calendar', date || '—'],
     ['Log File', 'fileText', fileName ? `logs/${fileName}` : '—'],
     ['Configured Interns', 'users', String(configuredCount || 0)],
-    ['Cron', 'clock', '0 20 * * *  (Asia/Kolkata, 8 PM IST)'],
+    ['Cron', 'clock', '0 19 * * *  (Asia/Kolkata, 7 PM IST)'],
     ['Teacher Format', 'award', 'Enabled (step-by-step feedback)']
   ];
 

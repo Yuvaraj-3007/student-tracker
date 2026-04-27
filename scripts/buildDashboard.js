@@ -1148,7 +1148,7 @@ function renderSettings() {
     ['Report Date', state.date],
     ['Log File', LOG ? 'logs/' + LOG.fileName : '—'],
     ['Configured Interns', String(CONFIGURED_STUDENTS.length)],
-    ['Cron', '0 20 * * *  (Asia/Kolkata, 8 PM IST)'],
+    ['Cron', '0 19 * * *  (Asia/Kolkata, 7 PM IST)'],
     ['Teacher Format', 'Enabled (step-by-step feedback)']
   ];
   for (const [k, v] of items) {

@@ -11,7 +11,7 @@ const { buildStudentReport, buildManagerReport } = require('./generateReport');
 
 const STUDENTS_FILE = path.join(__dirname, '..', 'config', 'students.json');
 const LOGS_DIR = path.join(__dirname, '..', 'logs');
-const CRON_SCHEDULE = '0 20 * * *';
+const CRON_SCHEDULE = '0 19 * * *';
 const CRON_TIMEZONE = 'Asia/Kolkata';
 const CONCURRENCY = 3;
 
@@ -166,7 +166,7 @@ async function runOnce() {
 }
 
 function startCron() {
-  console.log(`🌙 NIGHTWATCH scheduler started. Cron: "${CRON_SCHEDULE}" ${CRON_TIMEZONE} (daily 8 PM IST).`);
+  console.log(`🌙 NIGHTWATCH scheduler started. Cron: "${CRON_SCHEDULE}" ${CRON_TIMEZONE} (daily 7 PM IST).`);
   cron.schedule(
     CRON_SCHEDULE,
     () => {

@@ -56,7 +56,7 @@ After **every** implementation (before asking for commit approval), run these in
 This is a **multi-repo student tracking system**:
 
 - Students each have their own GitHub repo
-- A cron job (8 PM daily) fetches each student's commits
+- A cron job (7 PM daily) fetches each student's commits
 - Claude API analyzes the code and scores the student
 - Two emails go out: one summary to the manager, one personal feedback to each student
 
