@@ -8,6 +8,7 @@ const { fetchCommitsForStudent } = require('./fetchCommits');
 const { analyzeStudentWork } = require('./analyzeCommit');
 const { sendEmail } = require('./sendEmail');
 const { buildStudentReport, buildManagerReport } = require('./generateReport');
+const { runMigration, saveReport, closePool } = require('./db/reportRepository');
 
 const STUDENTS_FILE = path.join(__dirname, '..', 'config', 'students.json');
 const LOGS_DIR = path.join(__dirname, '..', 'logs');
@@ -89,14 +90,15 @@ async function processStudent(student) {
   }
 }
 
-function writeDailyLog(results) {
+function writeDailyLog(results, runAt) {
   if (!fs.existsSync(LOGS_DIR)) {
     fs.mkdirSync(LOGS_DIR, { recursive: true });
   }
-  const fileName = `${new Date().toISOString().slice(0, 10)}.json`;
+  const at = runAt instanceof Date ? runAt : new Date();
+  const fileName = `${at.toISOString().slice(0, 10)}.json`;
   const filePath = path.join(LOGS_DIR, fileName);
   const payload = {
-    runAt: new Date().toISOString(),
+    runAt: at.toISOString(),
     mode: process.env.USE_MOCKS === 'true' ? 'mock' : 'real',
     results: results.map((r) => ({
       student: r.student,
@@ -138,6 +140,7 @@ async function sendStudentEmails(results) {
 
 async function runOnce() {
   const { useMocks } = validateEnv();
+  const runAt = new Date();
   console.log('========================================');
   console.log('  🌙 NIGHTWATCH — Intern Tracking Agent');
   console.log('========================================');
@@ -145,24 +148,54 @@ async function runOnce() {
     console.log('⚠️  RUNNING IN MOCK MODE — no real APIs will be called.');
   }
 
-  const students = loadStudents();
-  console.log(`Loaded ${students.length} intern(s).`);
+  const dbEnabled = !!process.env.DATABASE_URL;
+  if (dbEnabled) {
+    try {
+      await runMigration();
+    } catch (err) {
+      console.error(`[db] Migration failed: ${err.message} — continuing without DB.`);
+    }
+  }
 
-  const results = await runInBatches(students, CONCURRENCY, processStudent);
+  try {
+    const students = loadStudents();
+    console.log(`Loaded ${students.length} intern(s).`);
 
-  const logPath = writeDailyLog(results);
-  console.log(`Log written: ${logPath}`);
+    const results = await runInBatches(students, CONCURRENCY, processStudent);
 
-  const managerResult = await sendManagerEmail(results);
-  console.log(`Manager report: ${managerResult.path || 'sent'}`);
+    const logPath = writeDailyLog(results, runAt);
+    console.log(`Log written: ${logPath}`);
 
-  const studentResults = await sendStudentEmails(results);
-  console.log(`Student emails sent: ${studentResults.length}`);
+    if (dbEnabled) {
+      const date = runAt.toISOString().slice(0, 10);
+      const runMode = useMocks ? 'mock' : 'real';
+      let saved = 0;
+      for (const r of results) {
+        try {
+          await saveReport(r.student, r, date, runAt, runMode);
+          saved += 1;
+        } catch (err) {
+          console.error(`[db] Failed to save report for ${r.student.name}: ${err.message}`);
+        }
+      }
+      console.log(`[db] Reports saved to PostgreSQL: ${saved}/${results.length}.`);
+    }
 
-  const active = results.filter((r) => r.isActive && !r.error).length;
-  const inactive = results.filter((r) => !r.isActive && !r.error).length;
-  const errored = results.filter((r) => r.error).length;
-  console.log(`Done. Active: ${active} · Inactive: ${inactive} · Errored: ${errored}`);
+    const managerResult = await sendManagerEmail(results);
+    console.log(`Manager report: ${managerResult.path || 'sent'}`);
+
+    const studentResults = await sendStudentEmails(results);
+    console.log(`Student emails sent: ${studentResults.length}`);
+
+    const active = results.filter((r) => r.isActive && !r.error).length;
+    const inactive = results.filter((r) => !r.isActive && !r.error).length;
+    const errored = results.filter((r) => r.error).length;
+    console.log(`Done. Active: ${active} · Inactive: ${inactive} · Errored: ${errored}`);
+  } finally {
+    if (dbEnabled) {
+      try { await closePool(); } catch (err) { console.error(`[db] closePool failed: ${err.message}`); }
+    }
+  }
 }
 
 function startCron() {

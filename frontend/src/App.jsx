@@ -22,14 +22,9 @@ export default function App() {
 
   const rows = useMemo(() => mergeRows(results, students), [results, students]);
 
-  const onSearchSubmit = () => {
-    if (view !== 'interns') setView('interns');
-  };
+  const onSearchSubmit = () => {};
 
-  const onSearchChange = (value) => {
-    setSearch(value);
-    if (value && view !== 'interns') setView('interns');
-  };
+  const onSearchChange = (value) => setSearch(value);
 
   return (
     <div className="app">
