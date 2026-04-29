@@ -25,6 +25,15 @@ screenshots/
 MOCK.md
 mock-design.html
 
+# Generated HTML reports from /nightwatch skill runs (parallel to logs/)
+reports/
+
+# Claude Code harness state (per-machine, not source)
+.claude/scheduled_tasks.lock
+
+# Personal status snapshots (not source)
+NIGHTWATCH-STATUS-REPORT.md
+
 # OS
 .DS_Store
 Thumbs.db
