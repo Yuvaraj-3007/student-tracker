@@ -68,6 +68,16 @@ Assemble the aggregate object:
 ```
 Write it to `logs/${REPORT_DATE}.json` with `Write`. Create `logs/` if missing via `Bash`: `mkdir -p logs`.
 
+**Step 5b — Save to PostgreSQL.**
+- Run the standalone save script via `Bash`:
+  ```bash
+  node scripts/saveReports.js || echo "[NIGHTWATCH] DB save skipped or failed — continuing."
+  ```
+- The script reads `logs/${REPORT_DATE}.json` and upserts each intern's row into `student_repo_reports`.
+- If `DATABASE_URL` is not set in `.env`, the script exits 0 immediately (`DATABASE_URL not set — nothing to do.`) — no error, skill continues normally.
+- If the DB is unreachable or migration fails, the `||` guard ensures Step 6 (emails) still runs.
+- Do **not** abort the pipeline on DB failure — emails are higher priority than persistence.
+
 **Step 6 — Send the emails.**
 Delegate to the `email-sender` subagent via `Task`. Pass it the path `logs/${REPORT_DATE}.json`.
 The subagent shells out to the Node helper that reuses the project's SMTP config.
