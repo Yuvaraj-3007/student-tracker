@@ -87,7 +87,7 @@ export default function Interns({ rows, search }) {
     <section className="view">
       <div className="page-title">
         <Icon name="users" size={16} stroke={2} />
-        Intern Directory
+        Team View
       </div>
       <div className="page-subtitle">
         Browse and filter interns by today's performance.
@@ -105,7 +105,7 @@ export default function Interns({ rows, search }) {
           />
         </div>
         <div className="filter">
-          <label htmlFor="f-risk">Concern Type</label>
+          <label htmlFor="f-risk">Review Status</label>
           <select id="f-risk" value={risk} onChange={(e) => setRisk(e.target.value)}>
             {RISK_OPTIONS.map((r) => (
               <option key={r || 'all'} value={r}>
@@ -150,11 +150,10 @@ export default function Interns({ rows, search }) {
             <tr>
               {[
                 ['name', 'Name'],
-                ['github', 'GitHub Handle'],
                 ['status', 'Activity'],
-                ['commits', 'Updates Today'],
-                ['score', 'Performance'],
-                ['risk', 'Concern']
+                ['commits', 'Work Today'],
+                ['score', 'Score'],
+                ['risk', 'Status']
               ].map(([key, label]) => (
                 <th key={key} onClick={() => handleSort(key)}>
                   {label}
@@ -169,7 +168,7 @@ export default function Interns({ rows, search }) {
           <tbody>
             {sorted.length === 0 ? (
               <tr>
-                <td colSpan="7">
+                <td colSpan="6">
                   <div className="empty-state">
                     <Icon name="search" size={48} stroke={1.5} />
                     <div className="empty-title">No interns match your filters.</div>
@@ -180,20 +179,6 @@ export default function Interns({ rows, search }) {
               sorted.map((r) => (
                 <tr key={r.name} className={r.isActive ? '' : 'inactive'}>
                   <td>{r.name}</td>
-                  <td>
-                    {r.github ? (
-                      <a
-                        className="link"
-                        href={`https://github.com/${r.github}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Icon name="github" size={12} />@{r.github}
-                      </a>
-                    ) : (
-                      '—'
-                    )}
-                  </td>
                   <td>
                     <StatusBadge active={r.isActive} />
                   </td>

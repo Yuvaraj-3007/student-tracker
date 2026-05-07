@@ -13,25 +13,25 @@ export default function Overview({ rows }) {
   const risks = rows.filter((r) => r.risk && r.risk !== 'none');
 
   const kpis = [
-    { label: 'Interns on Program', value: total, sub: 'Currently tracked', cls: 'purple', icon: 'users' },
+    { label: 'Team Size', value: total, sub: 'Currently tracked', cls: 'purple', icon: 'users' },
     {
-      label: 'Worked Today',
+      label: 'Active Today',
       value: active,
-      sub: `${total - active} didn't log work`,
+      sub: `${total - active} no activity today`,
       cls: 'good',
       icon: 'checkCircle'
     },
     {
-      label: 'Average Performance',
+      label: 'Team Score Today',
       value: `${avg}/10`,
-      sub: `${scores.length} reviewed`,
+      sub: `${scores.length} scored today`,
       cls: scoreClass(avg),
       icon: 'trendingUp'
     },
     {
       label: 'Needs Attention',
       value: risks.length,
-      sub: risks.length > 0 ? 'Flagged today' : 'All on track',
+      sub: risks.length > 0 ? 'interns to check on' : 'All on track',
       cls: risks.length > 0 ? 'bad' : 'good',
       icon: 'alertTriangle'
     }
@@ -45,7 +45,7 @@ export default function Overview({ rows }) {
     <section className="view">
       <div className="page-title">
         <Icon name="dashboard" size={16} stroke={2} />
-        Today at a Glance
+        Today's Summary
       </div>
       <div className="page-subtitle">
         Today's intern activity and AI feedback summary.
@@ -69,7 +69,7 @@ export default function Overview({ rows }) {
       <div className="section">
         <h2>
           <Icon name="trendingUp" size={15} />
-          Today's Performance Ranking
+          Today's Leaderboard
         </h2>
         {activeScored.length === 0 ? (
           <div className="empty-state">
@@ -97,7 +97,7 @@ export default function Overview({ rows }) {
       <div className="section">
         <h2>
           <Icon name="alertTriangle" size={15} />
-          Interns to Check On
+          Needs Your Attention
         </h2>
         {risks.length === 0 ? (
           <div className="empty-state">

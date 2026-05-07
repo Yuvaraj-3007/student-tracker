@@ -2,10 +2,10 @@ import React from 'react';
 import Icon from './Icon.jsx';
 
 const TITLES = {
-  overview: 'Today at a Glance',
-  interns: 'Intern Directory',
-  reports: 'Daily Feedback',
-  repos: 'GitHub Projects',
+  overview: "Today's Summary",
+  interns: 'Team View',
+  reports: 'Progress Reports',
+  repos: 'Projects',
   settings: 'Settings'
 };
 

@@ -10,9 +10,9 @@ const RISK_LABELS = {
 };
 
 const SCORE_LABELS = [
-  ['understanding', 'Understanding'],
-  ['implementation', 'Execution'],
-  ['code_quality', 'Code Quality'],
+  ['understanding', 'Concept Grasp'],
+  ['implementation', 'Task Completion'],
+  ['code_quality', 'Work Quality'],
   ['effort', 'Effort'],
   ['overall', 'Overall']
 ];
@@ -104,8 +104,8 @@ function DayReport({ entry }) {
             {RISK_LABELS[a.risk_flag] || a.risk_flag}
           </span>
           <span className="commit-count">
-            <Icon name="gitBranch" size={12} />
-            {entry.commitCount} update{entry.commitCount === 1 ? '' : 's'}
+            <Icon name="inbox" size={12} />
+            {entry.commitCount} submission{entry.commitCount === 1 ? '' : 's'}
           </span>
         </div>
       </div>
@@ -166,7 +166,7 @@ function InternExpansion({ history, rangeStart, rangeEnd }) {
         <select value={activeDate} onChange={(e) => setSelectedDate(e.target.value)}>
           {entries.map((e) => (
             <option key={e.date} value={e.date}>
-              {e.date} — {e.analysis ? `${e.analysis.scores.overall}/10` : 'inactive'}
+              {formatShortDate(e.date)} — {e.analysis ? `${e.analysis.scores.overall}/10` : 'inactive'}
             </option>
           ))}
         </select>
@@ -238,6 +238,9 @@ function InternCard({ row, history, expanded, onToggle, rangeStart, rangeEnd, da
             <span className="badge status-inactive">No activity in this range</span>
           )}
         </div>
+        <span className="expand-hint">
+          {expanded ? '▴ Hide details' : '▾ View details'}
+        </span>
       </div>
 
       <div className="day-cells">
@@ -256,7 +259,7 @@ function InternCard({ row, history, expanded, onToggle, rangeStart, rangeEnd, da
               <div className="day-cell-date">{formatShortDate(d)}</div>
               <div className="day-cell-commits">
                 {isActive
-                  ? `${commitCount} update${commitCount === 1 ? '' : 's'}`
+                  ? `${commitCount} change${commitCount === 1 ? '' : 's'}`
                   : '—'}
               </div>
               <div className="day-cell-score">
@@ -279,8 +282,8 @@ function InternCard({ row, history, expanded, onToggle, rangeStart, rangeEnd, da
           Worked <strong>{activeCountInRange}/{totalDaysInRange}</strong> days
         </div>
         <div className="progress-stat">
-          <Icon name="gitBranch" size={12} />
-          <strong>{totalUpdates}</strong> total update{totalUpdates === 1 ? '' : 's'}
+          <Icon name="inbox" size={12} />
+          <strong>{totalUpdates}</strong> total change{totalUpdates === 1 ? '' : 's'}
         </div>
         <div className="progress-stat">
           <Icon name="trendingUp" size={12} />
@@ -325,10 +328,27 @@ export default function Reports({ rows, history, search }) {
   const [endInput, setEndInput] = useState('');
   const [appliedStart, setAppliedStart] = useState('');
   const [appliedEnd, setAppliedEnd] = useState('');
+  const [activePreset, setActivePreset] = useState('all');
+
+  const applyPreset = (preset) => {
+    const today = new Date();
+    const fmt = (d) => d.toISOString().slice(0, 10);
+    if (preset === 'all') {
+      setStartInput(''); setEndInput(''); setAppliedStart(''); setAppliedEnd('');
+    } else if (preset === '7d') {
+      const s = new Date(today); s.setDate(today.getDate() - 6);
+      setStartInput(fmt(s)); setEndInput(fmt(today)); setAppliedStart(fmt(s)); setAppliedEnd(fmt(today));
+    } else if (preset === '30d') {
+      const s = new Date(today); s.setDate(today.getDate() - 29);
+      setStartInput(fmt(s)); setEndInput(fmt(today)); setAppliedStart(fmt(s)); setAppliedEnd(fmt(today));
+    }
+    setActivePreset(preset);
+  };
 
   const onShow = () => {
     setAppliedStart(startInput);
     setAppliedEnd(endInput);
+    setActivePreset('custom');
   };
 
   const onClear = () => {
@@ -336,6 +356,7 @@ export default function Reports({ rows, history, search }) {
     setEndInput('');
     setAppliedStart('');
     setAppliedEnd('');
+    setActivePreset('all');
   };
 
   const filteredRows = useMemo(() => {
@@ -402,10 +423,10 @@ export default function Reports({ rows, history, search }) {
     <section className="view">
       <div className="page-title">
         <Icon name="fileText" size={16} stroke={2} />
-        Daily Feedback
+        Progress Reports
       </div>
       <div className="page-subtitle">
-        Pick a date range, then click any intern to read their daily AI feedback.
+        Select a date range, then tap any intern card to read their AI feedback.
       </div>
 
       <div className="section-title" style={{ marginTop: 0 }}>
@@ -428,22 +449,22 @@ export default function Reports({ rows, history, search }) {
 
         <div className="summary-stat">
           <div className="summary-stat-body">
-            <div className="summary-stat-label">Total Updates</div>
+            <div className="summary-stat-label">Work Submissions</div>
             <div className="summary-stat-value">{overall.totalUpdates}</div>
-            <div className="summary-stat-sub">commits across the team</div>
+            <div className="summary-stat-sub">total code changes</div>
           </div>
           <div className="summary-stat-icon">
-            <Icon name="gitBranch" size={18} stroke={2} />
+            <Icon name="inbox" size={18} stroke={2} />
           </div>
         </div>
 
         <div className="summary-stat">
           <div className="summary-stat-body">
-            <div className="summary-stat-label">Team Avg Performance</div>
+            <div className="summary-stat-label">Team Average Score</div>
             <div className="summary-stat-value">
               {overall.teamAvg != null ? `${overall.teamAvg}/10` : '—'}
             </div>
-            <div className="summary-stat-sub">mean of daily AI scores</div>
+            <div className="summary-stat-sub">across all scored days</div>
           </div>
           <div className="summary-stat-icon">
             <Icon name="trendingUp" size={18} stroke={2} />
@@ -452,16 +473,37 @@ export default function Reports({ rows, history, search }) {
 
         <div className={`summary-stat ${flaggedClass}`}>
           <div className="summary-stat-body">
-            <div className="summary-stat-label">Interns Flagged</div>
+            <div className="summary-stat-label">Needs Attention</div>
             <div className="summary-stat-value">{overall.flaggedInterns}</div>
             <div className="summary-stat-sub">
-              {overall.flaggedInterns > 0 ? 'need a closer look' : 'all clear'}
+              {overall.flaggedInterns > 0 ? 'interns to check' : 'all clear'}
             </div>
           </div>
           <div className={`summary-stat-icon ${flaggedClass}`}>
             <Icon name="alertCircle" size={18} stroke={2} />
           </div>
         </div>
+      </div>
+
+      <div className="preset-btns">
+        <button
+          className={`preset-btn ${activePreset === 'all' ? 'active' : ''}`}
+          onClick={() => applyPreset('all')}
+        >
+          All Time
+        </button>
+        <button
+          className={`preset-btn ${activePreset === '7d' ? 'active' : ''}`}
+          onClick={() => applyPreset('7d')}
+        >
+          Last 7 Days
+        </button>
+        <button
+          className={`preset-btn ${activePreset === '30d' ? 'active' : ''}`}
+          onClick={() => applyPreset('30d')}
+        >
+          Last 30 Days
+        </button>
       </div>
 
       <div className="date-range-bar">
@@ -511,9 +553,9 @@ export default function Reports({ rows, history, search }) {
         </div>
         <div className="help-banner-body">
           <strong>How to read each card:</strong>
-          <span><strong>Day cells</strong> — one tile per day in the range, showing the date, update count, and that day's AI score.</span>
-          <span><strong>Progress footer</strong> — total days worked, total updates, team average, and the latest AI concern.</span>
-          <span>Click any intern card to open the full AI feedback for any specific day.</span>
+          <span><strong>Day tiles</strong> — one box per day, showing whether the intern worked, how many changes they submitted, and their AI score.</span>
+          <span><strong>Progress footer</strong> — total days worked, total changes, and the latest concern flag.</span>
+          <span>Tap any intern card to read the full AI feedback for that day.</span>
         </div>
       </div>
 

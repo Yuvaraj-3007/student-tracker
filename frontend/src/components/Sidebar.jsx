@@ -2,10 +2,10 @@ import React from 'react';
 import Icon from './Icon.jsx';
 
 const NAV = [
-  { id: 'overview', icon: 'dashboard', label: 'Today at a Glance' },
-  { id: 'reports', icon: 'fileText', label: 'Daily Feedback' },
-  { id: 'interns', icon: 'users', label: 'Intern Directory' },
-  { id: 'repos', icon: 'folder', label: 'GitHub Projects' }
+  { id: 'overview', icon: 'dashboard', label: "Today's Summary" },
+  { id: 'reports', icon: 'fileText', label: 'Progress Reports' },
+  { id: 'interns', icon: 'users', label: 'Team View' },
+  { id: 'repos', icon: 'folder', label: 'Projects' }
 ];
 
 export default function Sidebar({ current, onChange, mode }) {
